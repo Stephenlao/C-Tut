@@ -2,9 +2,6 @@
 using namespace std;
 
 
-void khangkobe() {
-    cout << "Hello World I'm Khangkobe"
-}
 int main() {
     int a,b;
     cout << "Enter a: ";
