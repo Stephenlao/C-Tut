@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-// Example of function outside class
+//EXAMPLE OF FUNCTION OUTSIDE CLASS
 
 // class Car {
 //     public:
@@ -22,7 +22,7 @@ using namespace std;
 // }
 
 
-// Example of creating constructor
+// EXAMPLE OF CREATING CONSTRUCTOR
 
 // class Car {
 //     public:
@@ -47,7 +47,7 @@ using namespace std;
 // }
 
 
-//Example of creating default arguments
+// EXAMPLE OF CREATING DEFAUTL ARGUMENTS
 
 // class Car { // The class
 //     public: // Access specifier
@@ -77,7 +77,8 @@ using namespace std;
 //     return 0;
 // }
 
-// example of data encapsulation 
+// EXAMPLE OF ENCAPSULATION 
+
 // #define DEFAULT_VAL 100
 // #define PASSWORD_KEY 12345
 // class myclass {
@@ -109,6 +110,8 @@ using namespace std;
 //     return 0;
 // }
 
+
+//EXAMPLE OF ARRAY OF OBJECTS
 class Car { 
     public: 
         std::string brand; 
