@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 
+// declare class not contain ()
 class Cat {
     public:
         string name;
