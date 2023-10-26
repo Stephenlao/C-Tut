@@ -46,7 +46,7 @@ class Staff {
         int staffID;
     public:
         Staff(string name_val = "", int staffID = 0) : name(name_val), staffID(staffID) {
-            cout << "Constructor of Student class is created" << "\n";
+            cout << "Constructor of Staff class is created" << "\n";
         };
 
         ~Staff() {
@@ -87,7 +87,7 @@ class Tutor: public Staff, public Student {
         };
 
         ~Tutor() {
-            cout << "Destrutor of Tutor" << "\n";
+            cout << "Destructor of Tutor" << "\n";
         };
 
         void setName(string name_val) {
