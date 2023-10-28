@@ -2,168 +2,147 @@
 #include <vector>
 using namespace std;
 
-class Book {
-    private:
-        string title;
-        int availableCopies;
-        vector<string> nameOfBorrowers;
-    
-    public:
-        // declare as member intializer
-        Book(string title = "", int availableCopies = 0, vector<string> nameOfBorrowers ={})
-        :title(title), availableCopies(availableCopies), nameOfBorrowers(nameOfBorrowers) {};
+class Department;
 
-        void showInfo() {
-            cout << "Book title: " << title << "\n";
-            cout << "Available copies: " << availableCopies << "\n";
-
-            for (string i : nameOfBorrowers) {
-                cout << "Name of borrowers: " << i << "\n";
-            }
-        };
-
-        // as friend 'User' class can access/call all attributes and functions from Book
-        // regardless of private or protected access
-        friend class User;
-};
-
-class User {
+class Staff {
     private:
         string name;
-        vector<Book*> borrowedBooks;
+        string departmentName;
+    public:
+        Staff(string name = "", string departmentName = "")
+        : name(name), departmentName(departmentName) {};
+
+        void joinDept(Department &department);
+        void leaveDept(Department &department);
+
+        void showInfo() {
+            cout << "Staff name: " << name << "\n";
+            cout << "Department name: " << departmentName << "\n"; 
+        };
+
+        void setName(string name) {
+            this ->name = name;
+        };
+
+        string getName() {
+            return name;
+        };
+
+        // void setDepartment(string departmentName) {
+        //     this -> deparmentName = deparmentName;
+        // };
+
+        // string getDepartmentName() {
+        //     return deparmentName;
+        // };
+
+};
+
+class Department {
+    protected:
+        string name;
+        string location;
+        vector <Staff*> staffList;
     
     public:
-        User(string name = "", vector<Book*> borrowedBooks = {}) {
-            this -> name = name;
-            this -> borrowedBooks = borrowedBooks;
-        };
+        Department(string name= "", string location = "", vector<Staff*> staffList = {})
+        : name(name), location(location) , staffList(staffList){};
 
-        bool doBorrow(Book &abook) {
-            if(abook.availableCopies == 0) {
-                cout << "This book is out of stock" << "\n";
-                return false;
-            };
+        void showInfo() {
+            cout << "Department name: "<< name << "\n";
+            cout << "Location: " << location << "\n";
 
-            // because borrowedBook is the vector pointer thus
-            // we return &abook which is return address to borrwedBooks
-            borrowedBooks.push_back(&abook);
-            abook.nameOfBorrowers.push_back(this -> name);
-            abook.availableCopies--;
-            return true;
-        };
-
-        bool doReturn(Book &abook) {
-            for (int i = 0; i < borrowedBooks.size(); i++) {
-                // compare title in each borrowedBook vector array whether
-                // equal to book title of borrowers. == 0 which is identical
-                if (borrowedBooks[i]->title.compare(abook.title) == 0) { 
-                    for (int j = 0; j < abook.nameOfBorrowers.size(); j++) {
-                        if (abook.nameOfBorrowers[j].compare(this ->name) == 0) {
-                            abook.nameOfBorrowers.erase(abook.nameOfBorrowers.begin() + j);
-                            abook.availableCopies++;
-                            borrowedBooks.erase(borrowedBooks.begin() + j);
-                            return true;
-                        };
-                    }   cout << "You are not borrow " << abook.title << "this books in book lists" << "\n";
-                        return false;
-                };
-                
-            }   cout << "This book does not exists" << "\n";
-                return false;
-        };
-
-        
-        void showInfo(){
-            cout << "Name: " << name << endl;
-            cout << "Borrowed books: ";
-
-            if(borrowedBooks.empty())
-            {
-                cout << "None.\n";
-            }else{
-                cout << "\n";
-
-                for(Book* i : borrowedBooks){
-                    cout << i->title << endl; 
+            if (staffList.empty()) {
+                cout << "None" << "\n";
+            } else {
+                for (Staff* staff : staffList) {
+                    cout << "Staff: " << staff->getName() << ", ";
                 }
+                cout << "\n";
             }
-            cout << endl;
+        };
+
+    friend class Staff;
+};
+
+class AcademicDept : public Department {
+    private:
+        int numberOfCourses;
+    
+    public:
+        AcademicDept(int numberOfCourses = 0,string name = "", string location = "", vector<Staff*> staffList = {})
+        : numberOfCourses(numberOfCourses),Department(name,location,staffList){};
+
+        void showInfo() {
+            Department::showInfo();
+            cout << "Number of courses: " << numberOfCourses << "\n";
+        }
+};
+
+class NonAcademicDept : public Department {
+    private:
+        int numberOfServices;
+    
+    public:
+        NonAcademicDept(int numberOfServices = 0,string name = "", string location = "", vector<Staff*> staffList = {})
+        : numberOfServices(numberOfServices), Department(name, location, staffList){};
+
+        void showInfo() {
+            Department::showInfo();
+            cout << "Number of services: " << numberOfServices << "\n";
         };
 };
 
-class superUser : public User {
-    public:
-         superUser(string name = "", vector<Book*> borrowedBooks = {}) 
-         : User(name,borrowedBooks) {}; // declare constructors inherit from User
-
-         bool doBorrow(Book &book1, Book &book2) { // & target to orginal object not create copy
-            if (User::doBorrow(book1) && User::doBorrow(book2)) {
-                return true;
-            }
-            return false;
-         };
+void Staff::joinDept(Department &department) {
+    if (departmentName != "") {
+        leaveDept(department);
+    };
+    departmentName = department.name;
+    department.staffList.push_back(this);
 };
 
-int main() {
-        vector<Book*> books = {
-        new Book("Book1", 3, vector<string>{} ), 
-        new Book("Book2", 3, vector<string>{} ),
-        new Book("Book3", 3, vector<string>{} )
-    };
+void Staff::leaveDept(Department &department) {
+    for (int i = 0; i < department.staffList.size(); i++) {
+        if (department.staffList[i] == this) { // this which is current Staff 
+            department.staffList.erase(department.staffList.begin() + i);
+            departmentName = "";
+        }
+    }
+};
+
+int main()
+{
+    Staff st1("Ling Huo Chong", ""), st2("Michael John", ""), st3("Ali Baba", ""); 
+
+    AcademicDept dept1(20, "SSET", "Building 2, 4th floor", vector<Staff*>{});
+    NonAcademicDept dept2(30, "ITS", "Building 1, Gnd floor", vector<Staff *>{});
+
+    st1.joinDept(dept1);
+    st2.joinDept(dept1);
+    st3.joinDept(dept2);
     
-    User user1("Vinh Khang", vector<Book *>{}), user2("Uyen Doan", vector<Book *>{});
+    st1.showInfo();
+    st2.showInfo();
+    st3.showInfo();
 
-    cout << "Initial\n";
+    dept1.showInfo();
+    dept2.showInfo();
 
-    books[0]->showInfo();
-    books[1]->showInfo();
-    books[2]->showInfo();
-    user1.showInfo();
-    user2.showInfo();
+    //movement of staff
+    st1.leaveDept(dept1);
+    st1.joinDept(dept2);
 
-    cout << "\nSome borrowing\n";
+    cout << "After movement of staff\n";
+    st1.showInfo();
+    st2.showInfo();
+    st3.showInfo();
 
-    user1.doBorrow(*books[0]);
-    user1.doBorrow(*books[1]);
-    user2.doBorrow(*books[1]);
-    user2.doBorrow(*books[2]);
-    
-    books[0]->showInfo();
-    books[1]->showInfo();
-    books[2]->showInfo();
-    user1.showInfo();
-    user2.showInfo();
-
-    cout << "\nSome returning\n";
-
-    user1.doReturn(*books[2]);
-    user1.doReturn(*books[1]);
-    user2.doReturn(*books[1]);
-
-    books[0]->showInfo();
-    books[1]->showInfo();
-    books[2]->showInfo();
-    user1.showInfo();
-    user2.showInfo();
-
-    cout << "SuperUser mode\n";
-
-    superUser sUser1("Christano Ronaldo", vector<Book *>{});
-    sUser1.showInfo();
-    
-    sUser1.doBorrow(*books[0], *books[1]); 
-    
-    books[0]->showInfo();
-    books[1]->showInfo();
-    books[2]->showInfo();
-    
-    sUser1.showInfo();
-    
-    //free memory allocated previously for books from line 141-145
-    for(Book* i : books)
-        delete i;   
+    dept1.showInfo();
+    dept2.showInfo();
 
     return 0;
 }
+
+
 
 
